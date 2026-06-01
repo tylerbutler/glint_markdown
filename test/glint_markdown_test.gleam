@@ -1,4 +1,5 @@
 import gleam/dict
+import gleam/list
 import gleam/string
 import gleeunit
 import gleeunit/should
@@ -11,6 +12,12 @@ pub fn main() {
 
 fn nil_command() {
   glint.command(fn(_, _, _) { Nil })
+}
+
+fn count_occurrences(haystack: String, needle: String) -> Int {
+  string.split(haystack, needle)
+  |> list.length
+  |> fn(n) { n - 1 }
 }
 
 fn sample_app() -> glint.Glint(Nil) {
@@ -198,6 +205,27 @@ pub fn to_files_user_file_includes_nested_subcommand_test() {
 
   string.contains(user_doc, "myapp user create")
   |> should.be_true
+}
+
+pub fn to_files_topic_file_does_not_duplicate_heading_test() {
+  let tree = glint.document(sample_app())
+  let opts =
+    glint_markdown.options("myapp")
+    |> glint_markdown.with_mode(glint_markdown.Multi(output_dir: "docs"))
+  let files = glint_markdown.to_files(tree, opts)
+
+  let assert Ok(serve_doc) = dict.get(files, "docs/serve.md")
+
+  // The `#` title already names the topic; it must not be repeated as a
+  // `## ` section, and its description must appear only once.
+  string.contains(serve_doc, "# `myapp serve`")
+  |> should.be_true
+
+  string.contains(serve_doc, "## `myapp serve`")
+  |> should.be_false
+
+  count_occurrences(serve_doc, "Start the server")
+  |> should.equal(1)
 }
 
 pub fn to_topics_index_body_links_to_topic_files_test() {

@@ -170,17 +170,29 @@ pub fn to_files(tree: Tree, opts: Options) -> Dict(String, String) {
   |> list.fold(dict.new(), fn(acc, topic) {
     let filename = dir <> "/" <> topic.meta.name <> ".md"
     let path = [opts.bin, topic.meta.name]
-    let entries =
-      flatten_with_path(topic, opts, path)
+    let topic_entry = Entry(path: path, tree: topic)
+    // The file's `#` heading and description already title the topic, so the
+    // topic's own section is rendered without re-emitting them. Descendant
+    // subcommands are still rendered as their own `##` sections.
+    let descendants =
+      topic.subcommands
+      |> filter_visible(opts)
+      |> list.flat_map(fn(sub) {
+        flatten_with_path(sub, opts, list.append(path, [sub.meta.name]))
+      })
       |> sort_entries
-    let header = "# `" <> opts.bin <> " " <> topic.meta.name <> "`\n"
+    let header = "# `" <> opts.bin <> " " <> topic.meta.name <> "`"
     let description = case topic.meta.description {
       "" -> ""
-      d -> "\n" <> d <> "\n"
+      d -> d
     }
-    let body = render_entries(entries, opts)
-    let contents = header <> description <> "\n" <> body <> "\n"
-    dict.insert(acc, filename, contents)
+    let topic_body = render_entry_body(topic_entry, opts)
+    let descendants_body = render_entries(descendants, opts)
+    let contents =
+      [header, description, topic_body, descendants_body]
+      |> list.filter(non_empty)
+      |> string.join("\n\n")
+    dict.insert(acc, filename, contents <> "\n")
   })
 }
 
@@ -322,12 +334,20 @@ fn render_entry(entry: Entry, opts: Options) -> String {
     "" -> ""
     d -> d
   }
+  let body = render_entry_body(entry, opts)
+
+  [heading, description, body]
+  |> list.filter(non_empty)
+  |> string.join("\n\n")
+}
+
+fn render_entry_body(entry: Entry, opts: Options) -> String {
   let usage = render_usage(entry, opts)
   let arguments = render_arguments(entry.tree)
   let flags = render_flags(entry.tree.flags)
   let subs = render_subcommands_list(entry, opts)
 
-  [heading, description, usage, arguments, flags, subs]
+  [usage, arguments, flags, subs]
   |> list.filter(non_empty)
   |> string.join("\n\n")
 }
