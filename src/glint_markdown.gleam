@@ -28,6 +28,24 @@
 //// multi-file output (one file per top-level subcommand plus an index).
 ////
 //// [oclif]: https://github.com/oclif/oclif/blob/main/src/readme-generator.ts
+////
+//// ## CLI integration
+////
+//// The companion module [`glint_markdown/cli`](./glint_markdown/cli.html)
+//// provides a ready-made `gen-docs` subcommand you can mount into your own
+//// glint app with a single line:
+////
+//// ```gleam
+//// glint.new()
+//// |> glint.with_name("myapp")
+//// |> glint.add(at: ["greet"], do: greet_cmd())
+//// |> glint_markdown_cli.mount(at: ["gen-docs"])
+//// |> glint.run(argv.load().arguments)
+//// ```
+////
+//// **Note**: `mount` is restricted to `Glint(Nil)` host apps — the common
+//// case. For non-`Nil` hosts, use `glint_markdown_cli.command/1` directly
+//// with `glint.map_command`.
 
 import gleam/dict.{type Dict}
 import gleam/int
