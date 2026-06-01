@@ -11,7 +11,7 @@ gleam = ">= 1.16.0 and < 2.0.0"
 gleam_stdlib = ">= 1.0.0 and < 2.0.0"
 # Pinned to a fork commit on tylerbutler/glint that exposes glint.document/1
 # and the public glint/help module. Replace `ref` with a tag once one is cut.
-glint = { git = "https://github.com/tylerbutler/glint.git", ref = "26c55e3" }
+glint = { git = "https://github.com/tylerbutler/glint.git", ref = "glint-markdown" }
 glugify = ">= 2.0.0 and < 3.0.0"
 simplifile = ">= 2.0.0 and < 3.0.0"
 
