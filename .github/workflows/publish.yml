@@ -22,6 +22,5 @@ jobs:
 
       - name: Publish to Hex
         env:
-          HEXPM_USER: ${{ secrets.HEXPM_USER }}
-          HEXPM_PASS: ${{ secrets.HEXPM_PASS }}
+          HEXPM_API_KEY: ${{ secrets.HEXPM_API_KEY }}
         run: mise exec -- gleam publish --yes

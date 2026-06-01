@@ -65,8 +65,9 @@ Releases are driven by [changie](https://changie.dev/) + GitHub Actions:
 3. Merging the release PR triggers `.github/workflows/auto-tag.yml`, which
    creates the `vX.Y.Z` tag and GitHub Release.
 4. The tag push triggers `.github/workflows/publish.yml`, which re-runs CI
-   then `gleam publish --yes` to Hex (requires `HEXPM_USER` + `HEXPM_PASS`
-   repo secrets).
+   then `gleam publish --yes` to Hex (requires the `HEXPM_API_KEY` repo
+   secret — generate one via `mise exec -- gleam hex authenticate` and
+   add it under **Settings → Secrets and variables → Actions**).
 
 ## Upstream `glint` dependency
 
