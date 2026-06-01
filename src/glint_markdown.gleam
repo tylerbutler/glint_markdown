@@ -210,8 +210,8 @@ pub fn to_topics_index_body(tree: Tree, opts: Options) -> String {
     })
     |> string.join("\n")
   case bullets {
-    "" -> "# Command Topics"
-    _ -> "# Command Topics\n\n" <> bullets
+    "" -> "## Command Topics"
+    _ -> "## Command Topics\n\n" <> bullets
   }
 }
 
