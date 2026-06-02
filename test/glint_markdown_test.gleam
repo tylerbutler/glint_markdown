@@ -135,7 +135,10 @@ pub fn to_root_body_renders_top_level_command_without_heading_test() {
   |> should.be_true
 
   string.contains(body, "`myapp serve`")
-  |> should.be_true
+  |> should.be_false
+
+  string.contains(body, "**Subcommands:**")
+  |> should.be_false
 }
 
 // ---------------------------------------------------------------------------
@@ -257,4 +260,18 @@ pub fn to_topics_index_body_links_to_topic_files_test() {
 
   string.contains(index, "docs/user.md")
   |> should.be_true
+}
+
+pub fn to_topics_index_body_uses_subcommands_heading_test() {
+  let tree = glint.document(sample_app())
+  let opts =
+    glint_markdown.options("myapp")
+    |> glint_markdown.with_mode(glint_markdown.Multi(output_dir: "docs"))
+  let index = glint_markdown.to_topics_index_body(tree, opts)
+
+  string.starts_with(index, "## Subcommands")
+  |> should.be_true
+
+  string.contains(index, "## Command Topics")
+  |> should.be_false
 }

@@ -154,11 +154,11 @@ pub fn to_toc_body(tree: Tree, opts: Options) -> String {
 }
 
 /// Render the body for `<!-- root -->` / `<!-- rootstop -->` sentinels — the
-/// root command's description, usage, flags, arguments, and subcommands, with
-/// no enclosing title.
+/// root command's description, usage, flags, and arguments, with no enclosing
+/// title or subcommand list.
 pub fn to_root_body(tree: Tree, opts: Options) -> String {
   let entry = Entry(path: [opts.bin], tree: tree)
-  [tree.meta.description, render_entry_body(entry, opts)]
+  [tree.meta.description, render_entry_body(entry, opts, False)]
   |> list.filter(non_empty)
   |> string.join("\n\n")
 }
@@ -203,7 +203,7 @@ pub fn to_files(tree: Tree, opts: Options) -> Dict(String, String) {
       "" -> ""
       d -> d
     }
-    let topic_body = render_entry_body(topic_entry, opts)
+    let topic_body = render_entry_body(topic_entry, opts, True)
     let descendants_body = render_entries(descendants, opts)
     let contents =
       [header, description, topic_body, descendants_body]
@@ -214,7 +214,7 @@ pub fn to_files(tree: Tree, opts: Options) -> Dict(String, String) {
 }
 
 /// Render the body for `<!-- commands -->` when using [`Multi`](#Mode) mode —
-/// a `## Command Topics` heading followed by a bulleted index linking each
+/// a `## Subcommands` heading followed by a bulleted index linking each
 /// topic file produced by [`to_files`](#to_files).
 pub fn to_topics_index_body(tree: Tree, opts: Options) -> String {
   let dir = case opts.mode {
@@ -239,8 +239,8 @@ pub fn to_topics_index_body(tree: Tree, opts: Options) -> String {
     })
     |> string.join("\n")
   case bullets {
-    "" -> "## Command Topics"
-    _ -> "## Command Topics\n\n" <> bullets
+    "" -> "## Subcommands"
+    _ -> "## Subcommands\n\n" <> bullets
   }
 }
 
@@ -351,18 +351,25 @@ fn render_entry(entry: Entry, opts: Options) -> String {
     "" -> ""
     d -> d
   }
-  let body = render_entry_body(entry, opts)
+  let body = render_entry_body(entry, opts, True)
 
   [heading, description, body]
   |> list.filter(non_empty)
   |> string.join("\n\n")
 }
 
-fn render_entry_body(entry: Entry, opts: Options) -> String {
+fn render_entry_body(
+  entry: Entry,
+  opts: Options,
+  include_subcommands: Bool,
+) -> String {
   let usage = render_usage(entry, opts)
   let arguments = render_arguments(entry.tree)
   let flags = render_flags(entry.tree.flags)
-  let subs = render_subcommands_list(entry, opts)
+  let subs = case include_subcommands {
+    True -> render_subcommands_list(entry, opts)
+    False -> ""
+  }
 
   [usage, arguments, flags, subs]
   |> list.filter(non_empty)
