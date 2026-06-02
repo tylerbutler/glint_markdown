@@ -66,7 +66,8 @@ let opts = glint_markdown.options("myapp")
 // Complete document with `# myapp` title + TOC + every command.
 let readme = glint_markdown.to_string(tree, opts)
 
-// Or just the command body, for injecting into an existing README:
+// Or just the generated sections, for injecting into an existing README:
+let root = glint_markdown.to_root_body(tree, opts)
 let body = glint_markdown.to_commands_body(tree, opts)
 let toc  = glint_markdown.to_toc_body(tree, opts)
 ```
@@ -92,6 +93,11 @@ Mark up your README with sentinel comments and let `glint_markdown` rewrite the
 content between them on every release. Mirrors oclif's `replaceTag`:
 
 ```markdown
+<!-- root -->
+<!-- rootstop -->
+
+## Table of contents
+
 <!-- toc -->
 <!-- tocstop -->
 
@@ -105,6 +111,7 @@ content between them on every release. Mirrors oclif's `replaceTag`:
 let readme = read_existing_readme()
 let updated =
   readme
+  |> glint_markdown.inject("root", glint_markdown.to_root_body(tree, opts))
   |> glint_markdown.inject("toc", glint_markdown.to_toc_body(tree, opts))
   |> glint_markdown.inject(
     "commands",
@@ -143,7 +150,7 @@ Now `myapp gen-docs [FLAGS]` renders the rest of your CLI as Markdown.
 |------|---------|---------|
 | `--mode` | `single` | `single` (one document) or `multi` (one file per top-level subcommand) |
 | `--out` | — | File path (single mode) or directory (multi mode, defaults to `./docs`) |
-| `--readme` | — | Inject between `<!-- commands -->`/`<!-- toc -->` sentinels in this file |
+| `--readme` | — | Inject between `<!-- root -->`, `<!-- commands -->`, and `<!-- toc -->` sentinels in this file |
 | `--repo-prefix` | — | Repository URL prefix used by `_See code:_` links |
 | `--include-hidden` | `false` | Include hidden commands |
 | `--no-toc` | `false` | Skip the table of contents in single-file mode |

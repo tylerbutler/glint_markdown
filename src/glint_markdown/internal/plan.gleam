@@ -62,6 +62,8 @@ const default_docs_dir: String = "./docs"
 
 const toc_tag: String = "toc"
 
+const root_tag: String = "root"
+
 const commands_tag: String = "commands"
 
 // ---------------------------------------------------------------------------
@@ -97,14 +99,18 @@ fn plan_single(tree: Tree, opts: PlanOpts) -> List(Action) {
   case opts.readme {
     Some(readme_path) -> {
       // --readme wins; --out is ignored when injecting.
+      let root_body = glint_markdown.to_root_body(tree, render_opts)
       let commands_body = glint_markdown.to_commands_body(tree, render_opts)
+      let root_action =
+        InjectFile(path: readme_path, tag: root_tag, body: root_body)
       let commands_action =
         InjectFile(path: readme_path, tag: commands_tag, body: commands_body)
       case opts.no_toc {
-        True -> [commands_action]
+        True -> [root_action, commands_action]
         False -> {
           let toc_body = glint_markdown.to_toc_body(tree, render_opts)
           [
+            root_action,
             InjectFile(path: readme_path, tag: toc_tag, body: toc_body),
             commands_action,
           ]
@@ -166,8 +172,10 @@ fn plan_multi(tree: Tree, opts: PlanOpts) -> List(Action) {
   case opts.readme {
     None -> file_actions
     Some(readme_path) -> {
+      let root_body = glint_markdown.to_root_body(tree, render_opts)
       let index_body = glint_markdown.to_topics_index_body(tree, render_opts)
       list.append(file_actions, [
+        InjectFile(path: readme_path, tag: root_tag, body: root_body),
         InjectFile(path: readme_path, tag: commands_tag, body: index_body),
       ])
     }

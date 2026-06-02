@@ -16,10 +16,16 @@
 ////   |> io.println
 ////
 ////   // Or inject into an existing README between sentinel comments:
+////   //     <!-- root -->
+////   //     <!-- rootstop -->
 ////   //     <!-- commands -->
 ////   //     <!-- commandsstop -->
+////   let root = glint_markdown.to_root_body(tree, options)
 ////   let body = glint_markdown.to_commands_body(tree, options)
-////   let updated = glint_markdown.inject(existing_readme, "commands", body)
+////   let updated =
+////     existing_readme
+////     |> glint_markdown.inject("root", root)
+////     |> glint_markdown.inject("commands", body)
 //// }
 //// ```
 ////
@@ -115,6 +121,7 @@ pub fn with_repository_prefix(opts: Options, prefix: String) -> Options {
 /// `# bin`, TOC, then one `##`-headed section per command.
 ///
 /// For incremental updates to an existing README prefer
+/// [`to_root_body`](#to_root_body) +
 /// [`to_commands_body`](#to_commands_body) +
 /// [`to_toc_body`](#to_toc_body) + [`inject`](#inject).
 pub fn to_string(tree: Tree, opts: Options) -> String {
@@ -144,6 +151,16 @@ pub fn to_commands_body(tree: Tree, opts: Options) -> String {
 pub fn to_toc_body(tree: Tree, opts: Options) -> String {
   flatten(tree, opts)
   |> render_toc
+}
+
+/// Render the body for `<!-- root -->` / `<!-- rootstop -->` sentinels — the
+/// root command's description, usage, flags, arguments, and subcommands, with
+/// no enclosing title.
+pub fn to_root_body(tree: Tree, opts: Options) -> String {
+  let entry = Entry(path: [opts.bin], tree: tree)
+  [tree.meta.description, render_entry_body(entry, opts)]
+  |> list.filter(non_empty)
+  |> string.join("\n\n")
 }
 
 // ---------------------------------------------------------------------------

@@ -99,11 +99,13 @@ pub fn plan_single_inject_readme_test() {
   let assert Ok(actions) = plan.plan(tree, opts)
 
   let render_opts = glint_markdown.options("myapp")
+  let root = glint_markdown.to_root_body(tree, render_opts)
   let toc = glint_markdown.to_toc_body(tree, render_opts)
   let body = glint_markdown.to_commands_body(tree, render_opts)
 
   actions
   |> should.equal([
+    plan.InjectFile(path: "README.md", tag: "root", body: root),
     plan.InjectFile(path: "README.md", tag: "toc", body: toc),
     plan.InjectFile(path: "README.md", tag: "commands", body: body),
   ])
@@ -129,9 +131,9 @@ pub fn plan_single_inject_readme_ignores_out_test() {
   })
   |> should.be_false
 
-  // Should produce exactly the two inject actions.
+  // Should produce exactly the three inject actions.
   list.length(actions)
-  |> should.equal(2)
+  |> should.equal(3)
 }
 
 // ---------------------------------------------------------------------------
@@ -158,8 +160,10 @@ pub fn plan_single_no_toc_inject_readme_test() {
 
   let body =
     glint_markdown.to_commands_body(tree, glint_markdown.options("myapp"))
+  let root = glint_markdown.to_root_body(tree, glint_markdown.options("myapp"))
   actions
   |> should.equal([
+    plan.InjectFile(path: "README.md", tag: "root", body: root),
     plan.InjectFile(path: "README.md", tag: "commands", body: body),
   ])
 }
@@ -227,9 +231,14 @@ pub fn plan_multi_inject_readme_test() {
     )
   let assert Ok(actions) = plan.plan(tree, opts)
 
-  // 2 file writes + 1 inject = 3 actions.
+  // 2 file writes + 2 injects = 4 actions.
   list.length(actions)
-  |> should.equal(3)
+  |> should.equal(4)
+
+  let root = glint_markdown.to_root_body(tree, glint_markdown.options("myapp"))
+  let assert [_, _, root_action, _] = actions
+  root_action
+  |> should.equal(plan.InjectFile(path: "README.md", tag: "root", body: root))
 
   // Last action should be the index injection.
   let render_opts =
