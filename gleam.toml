@@ -8,6 +8,7 @@ repository = { type = "github", user = "tylerbutler", repo = "glint_markdown" }
 gleam = ">= 1.16.0 and < 2.0.0"
 
 [dependencies]
+filepath = ">= 1.1.0 and < 2.0.0"
 gleam_stdlib = ">= 1.0.0 and < 2.0.0"
 # Pinned to a fork commit on tylerbutler/glint that exposes glint.document/1
 # and the public glint/help module. Replace `ref` with a tag once one is cut.
@@ -31,6 +32,6 @@ label_possible = "off"
 assert_ok_pattern = "off"
 
 [tools.glinter.ignore]
-# gleeunit discovers `pub` test functions by reflection, type annotations add
-# little in tests, and panicking is the idiomatic way for a test to fail.
-"test/**/*.gleam" = ["unused_exports", "missing_type_annotation", "avoid_panic"]
+# gleeunit discovers `pub` test functions by reflection, and assertions are
+# the idiomatic way for a test to fail.
+"test/**/*.gleam" = ["unused_exports", "avoid_panic"]

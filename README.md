@@ -72,6 +72,10 @@ let body = glint_markdown.to_commands_body(tree, opts)
 let toc  = glint_markdown.to_toc_body(tree, opts)
 ```
 
+Command sections have explicit `command-` anchors. The renderer assigns unique
+IDs, including when command names contain punctuation, accented letters, or
+produce the same slug. Separate TOC and command-body calls use the same IDs.
+
 ### Multi-file (one file per top-level subcommand)
 
 ```gleam
@@ -86,6 +90,10 @@ let files = glint_markdown.to_files(tree, opts)
 // Index body to inject into your main README between sentinel comments.
 let index = glint_markdown.to_topics_index_body(tree, opts)
 ```
+
+Index links encode spaces and other URL characters without changing filenames.
+The CLI makes injected links relative to the README's directory, not the
+working directory.
 
 ## Sentinel-comment injection
 
@@ -156,6 +164,21 @@ Now `myapp gen-docs [FLAGS]` renders the rest of your CLI as Markdown.
 | `--no-toc` | `false` | Skip the table of contents in single-file mode |
 | `--check` | `false` | Render + diff against disk; exit 1 if anything would change, write nothing — ideal for CI |
 | `--quiet` | `false` | Suppress the "wrote N, injected M" summary line |
+
+Markdown sent to stdout contains no status messages. Summaries and errors go to
+stderr, so `myapp gen-docs > reference.md` produces a Markdown document.
+
+Multi-file generation rejects unsafe topic filenames and a README that would
+also be replaced by a generated topic file. These checks run before any writes.
+
+File replacements are staged beside the destination and renamed only after a
+successful write. Existing permission bits are preserved, and symbolic links
+continue to point to their updated referents. Changed hardlinked files are
+refused rather than silently separating their links. Failed writes leave the
+original file intact.
+
+`--check` compares bytes on both targets, including UTF-8 byte-order marks.
+README injection preserves a byte-order mark and rejects invalid UTF-8.
 
 ### ⚠️ `mount` restriction: `Glint(Nil)` only
 

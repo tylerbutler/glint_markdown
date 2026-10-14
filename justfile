@@ -31,10 +31,12 @@ build-strict:
 # Run tests (Erlang target)
 test:
     mise exec -- gleam test
+    mise exec -- node test/cli_integration.mjs erlang
 
 # Run tests on the JavaScript target (nodejs runtime)
 test-js:
     mise exec -- gleam test --target javascript --runtime nodejs
+    mise exec -- node test/cli_integration.mjs javascript
 
 # Type check without producing artifacts
 check:

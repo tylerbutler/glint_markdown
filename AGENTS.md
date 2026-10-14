@@ -18,7 +18,7 @@
 
 ## High-level architecture
 
-- `src/glint_markdown.gleam` is the entire public API of the library — there is no internal/ split (yet).
+- `src/glint_markdown.gleam` contains the pure renderer API. `src/glint_markdown/cli.gleam` provides CLI integration; `internal/plan` and `internal/io` separate planning from execution.
 - Input: `glint/help.Tree` produced by `glint.document/1` upstream.
 - Output: `String` Markdown, or `Dict(String, String)` of filename → contents in multi-file mode.
 - Modes (`Mode`):
@@ -33,7 +33,7 @@
 
 - Conventional Commits are enforced on PR titles (`.commitlintrc.json` + `.github/workflows/pr.yml`).
 - Every PR that touches `src/` should add a changie fragment via `just change`. The Changelog job will comment on PRs lacking one.
-- Anchor slug generation is delegated to the [`glugify`](https://hex.pm/packages/glugify) Hex package — do not hand-roll slug helpers.
+- Anchor slug generation is delegated to the [`glugify`](https://hex.pm/packages/glugify) Hex package. Allocate unique explicit `command-` anchors per document and reuse them for navigation; do not hand-roll slug helpers.
 - The `glint` dependency is pinned to a git ref on `tylerbutler/glint` until the upstream `glint.document/1` API is merged + released to Hex. When updating `gleam.toml`, prefer a commit SHA over a branch ref (per Gleam's own docs).
 - Public API never re-exports types from `glint/internal/help`; downstream consumers should only need to import `glint`, `glint/help`, and `glint_markdown`.
-- Tests live in `test/glint_markdown_test.gleam` (gleeunit). Add a focused test for any new public function.
+- Gleeunit tests live under `test/`; `test/cli_integration.mjs` checks CLI subprocesses on both targets. Annotate all module functions, including tests, and add a focused test for any new public function.

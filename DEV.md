@@ -38,6 +38,9 @@ just clean          # remove build artifacts
 
 Run `just` with no arguments to see the full recipe list.
 
+Both test recipes also run CLI subprocess checks. These check stdout and stderr,
+exit codes, safe destinations, and links injected into nested READMEs.
+
 To run a single Gleam test module, invoke `gleam test` directly through mise
 and pass the module name:
 
