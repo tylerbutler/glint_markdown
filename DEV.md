@@ -56,6 +56,10 @@ just changelog-preview     # see what the next release will look like
 
 ## Releasing
 
+`just publish-dry` builds a local Hex tarball without publishing or replacing a
+release. Hex packaging requires Hex dependencies, so this check will fail
+while `glint` remains a Git dependency.
+
 Releases are driven by [changie](https://changie.dev/) + GitHub Actions:
 
 1. Merge PRs with changelog fragments under `.changes/unreleased/`.

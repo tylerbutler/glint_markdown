@@ -76,11 +76,11 @@ changelog:
 
 # === HEX PUBLISHING ===
 
-# Dry-run a Hex publish (does not actually publish)
+# Build a Hex package locally without publishing
 publish-dry:
-    mise exec -- gleam publish --replace --yes
+    mise exec -- gleam export hex-tarball
 
-# Publish to Hex. Requires HEX_API_KEY env var (or interactive auth).
+# Publish to Hex. Requires HEXPM_API_KEY env var (or interactive auth).
 publish:
     mise exec -- gleam publish
 
