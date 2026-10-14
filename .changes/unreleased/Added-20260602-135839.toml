@@ -1,3 +1,0 @@
-package = "glint_markdown"
-kind = "Added"
-body = "Add README root sentinel injection via `to_root_body` and `gen-docs --readme`."

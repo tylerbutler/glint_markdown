@@ -1,5 +1,5 @@
 name = "glint_markdown"
-version = "0.0.0"
+version = "0.1.0"
 
 description = "Auto-generate Markdown reference documentation from a glint CLI."
 licences = ["Apache-2.0"]
