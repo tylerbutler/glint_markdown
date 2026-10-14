@@ -1,3 +1,0 @@
-package = "glint_markdown"
-kind = "Fixed"
-body = "`to_files` no longer duplicates each topic's heading and description. The per-file `#` title now serves as the topic section, and only descendant subcommands are rendered as `##` sections."
