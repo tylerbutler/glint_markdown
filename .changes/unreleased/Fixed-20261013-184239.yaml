@@ -1,3 +1,0 @@
-kind: Fixed
-body: Use explicit unique command anchors, encode and relativize topic links, reject unsafe topic paths and conflicting destinations, and keep CLI status output on stderr.
-time: 2026-10-13T18:42:39.498370217-07:00

@@ -12,8 +12,9 @@
 - Format check: `just format-check`
 - Lint: `just glint` (glinter; configured under `[tools.glinter]` in `gleam.toml`)
 - Format-check + lint: `just lint`
-- Full local CI pass: `just ci` (format-check + glint + check + test + test-js + build-strict)
-- Create a changelog fragment: `just change`
+- Check release configuration and fragments: `just doctor`
+- Full local CI pass: `just ci` (doctor + format-check + glint + check + test + test-js + build-strict)
+- Create a changelog fragment: `just change <kind> "<body>"`
 - Preview unreleased changelog: `just changelog-preview`
 
 ## High-level architecture
@@ -32,7 +33,8 @@
 ## Key repository conventions
 
 - Conventional Commits are enforced on PR titles (`.commitlintrc.json` + `.github/workflows/pr.yml`).
-- Every PR that touches `src/` should add a changie fragment via `just change`. The Changelog job will comment on PRs lacking one.
+- PRs with user-visible changes should add a Trellis TOML fragment via `just change <kind> "<body>"`. The Changelog job checks all package files, comments on missing entries, and fails on invalid fragments.
+- Releases use Trellis's `git_only` lifecycle. `just release-pr` prepares `release/pending`; merging it creates a `vX.Y.Z` tag and GitHub Release. Do not publish this package to Hex.
 - Anchor slug generation is delegated to the [`glugify`](https://hex.pm/packages/glugify) Hex package. Allocate unique explicit `command-` anchors per document and reuse them for navigation; do not hand-roll slug helpers.
 - The `glint` dependency is pinned to a git ref on `tylerbutler/glint` until the upstream `glint.document/1` API is merged + released to Hex. When updating `gleam.toml`, prefer a commit SHA over a branch ref (per Gleam's own docs).
 - Public API never re-exports types from `glint/internal/help`; downstream consumers should only need to import `glint`, `glint/help`, and `glint_markdown`.

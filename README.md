@@ -1,7 +1,7 @@
 # glint_markdown
 
 [![CI](https://github.com/tylerbutler/glint_markdown/actions/workflows/ci.yml/badge.svg)](https://github.com/tylerbutler/glint_markdown/actions/workflows/ci.yml)
-[![Package Version](https://img.shields.io/hexpm/v/glint_markdown)](https://hex.pm/packages/glint_markdown)
+[![Release](https://img.shields.io/github/v/release/tylerbutler/glint_markdown)](https://github.com/tylerbutler/glint_markdown/releases)
 
 Auto-generate Markdown reference documentation from a [`glint`](https://hex.pm/packages/glint) CLI.
 
@@ -14,21 +14,18 @@ main README).
 
 ## Installation
 
-Until the upstream `glint.document/1` API is merged + released to Hex, this
-library depends on a fork of `glint` via git ref. Add both pinned to the same
-fork commit:
+This library has Git-only releases and is not published to Hex. Choose a
+`vX.Y.Z` tag from [GitHub Releases](https://github.com/tylerbutler/glint_markdown/releases)
+and pin `glint_markdown` to its commit SHA.
+
+Until the upstream `glint.document/1` API is released to Hex, also add the
+`glint` fork at the commit recorded in that release's `manifest.toml`:
 
 ```toml
 # gleam.toml
 [dependencies]
-glint = { git = "https://github.com/tylerbutler/glint.git", ref = "26c55e3" }
+glint = { git = "https://github.com/tylerbutler/glint.git", ref = "6b72c59f2ae7a09672650d6dd2295ec9930c4ebe" }
 glint_markdown = { git = "https://github.com/tylerbutler/glint_markdown.git", ref = "..." }
-```
-
-Once on Hex:
-
-```sh
-gleam add glint_markdown
 ```
 
 ## Quick start
