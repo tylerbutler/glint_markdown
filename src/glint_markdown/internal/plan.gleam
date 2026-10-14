@@ -64,7 +64,7 @@ pub type PlanOptions {
 // Constants
 // ---------------------------------------------------------------------------
 
-const default_docs_dir: String = "./docs"
+const default_documentation_directory: String = "./docs"
 
 const toc_tag: String = "toc"
 
@@ -175,7 +175,7 @@ fn plan_multi(
   options: PlanOptions,
 ) -> Result(List(Action), PlanError) {
   use _ <- result.try(list.try_each(tree.subcommands, validate_topic))
-  let directory = option.unwrap(options.output, default_docs_dir)
+  let directory = option.unwrap(options.output, default_documentation_directory)
   let render_options =
     to_render_options(options)
     |> glint_markdown.with_mode(glint_markdown.Multi(output_dir: directory))

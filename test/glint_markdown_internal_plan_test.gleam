@@ -179,7 +179,7 @@ pub fn plan_single_no_toc_inject_readme_test() -> Nil {
 // multi mode
 // ---------------------------------------------------------------------------
 
-pub fn plan_multi_default_dir_test() -> Nil {
+pub fn plan_multi_default_directory_test() -> Nil {
   let tree = glint.document(sample_app())
   let options = plan.PlanOptions(..default_options(), mode: plan.MultiMode)
   let assert Ok(actions) = plan.plan(tree, options)
@@ -202,7 +202,7 @@ pub fn plan_multi_default_dir_test() -> Nil {
   |> should.be_true
 }
 
-pub fn plan_multi_custom_dir_test() -> Nil {
+pub fn plan_multi_custom_directory_test() -> Nil {
   let tree = glint.document(sample_app())
   let options =
     plan.PlanOptions(
